@@ -1,0 +1,19 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Spring Boot / Maven
+target/
+
+# Node.js
+node_modules/
+dist/
+
+# Environment files / API keys
+.env
+.env.*
+
+# VS Code
+.vscode/
+
+*.zip

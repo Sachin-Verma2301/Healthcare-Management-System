@@ -1,4 +1,4 @@
-package com.healthcare.billing.service;
+package com.healthcare.billing;
 
 import com.healthcare.billing.model.Bill;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package com.healthcare.billing.controller;
 
 import com.healthcare.billing.model.Bill;
-import com.healthcare.billing.service.BillingService;
+import com.healthcare.billing.BillingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,26 +1,26 @@
 package com.healthcare.healthcare_backend.dto;
 
-import com.healthcare.healthcare_backend.entity.Role;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class RegisterRequest {
 
+    @NotBlank(message = "Name is required")
     private String name;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     private String email;
+
+    @NotBlank(message = "Password is required")
     private String password;
+
+    @NotBlank(message = "Phone is required")
     private String phone;
-    private Role role;
 
-    // Doctor specific fields
-    private String specialization;
-    private String qualification;
-    private Integer experience;
-    private Double consultationFee;
-    private String availability;
-
-    // Patient specific fields
-    private String medicalHistory;
-    private String gender;
-    private String bloodGroup;
+    @NotNull(message = "Role is required")
+    private String role;
 
     public RegisterRequest() {
     }
@@ -57,75 +57,11 @@ public class RegisterRequest {
         this.phone = phone;
     }
 
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
-    }
-
-    public String getSpecialization() {
-        return specialization;
-    }
-
-    public void setSpecialization(String specialization) {
-        this.specialization = specialization;
-    }
-
-    public String getQualification() {
-        return qualification;
-    }
-
-    public void setQualification(String qualification) {
-        this.qualification = qualification;
-    }
-
-    public Integer getExperience() {
-        return experience;
-    }
-
-    public void setExperience(Integer experience) {
-        this.experience = experience;
-    }
-
-    public Double getConsultationFee() {
-        return consultationFee;
-    }
-
-    public void setConsultationFee(Double consultationFee) {
-        this.consultationFee = consultationFee;
-    }
-
-    public String getAvailability() {
-        return availability;
-    }
-
-    public void setAvailability(String availability) {
-        this.availability = availability;
-    }
-
-    public String getMedicalHistory() {
-        return medicalHistory;
-    }
-
-    public void setMedicalHistory(String medicalHistory) {
-        this.medicalHistory = medicalHistory;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getBloodGroup() {
-        return bloodGroup;
-    }
-
-    public void setBloodGroup(String bloodGroup) {
-        this.bloodGroup = bloodGroup;
     }
 }

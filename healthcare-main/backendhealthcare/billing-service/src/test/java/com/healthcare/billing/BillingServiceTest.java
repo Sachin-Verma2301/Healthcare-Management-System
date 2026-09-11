@@ -2,6 +2,7 @@ package com.healthcare.billing;
 
 import com.healthcare.billing.model.Bill;
 
+import com.healthcare.billing.service.BillingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

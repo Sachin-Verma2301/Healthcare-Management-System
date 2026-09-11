@@ -3,16 +3,13 @@ package com.healthcare.healthcare_backend.controller;
 import com.healthcare.healthcare_backend.dto.AppointmentRequest;
 import com.healthcare.healthcare_backend.entity.Appointment;
 import com.healthcare.healthcare_backend.service.AppointmentService;
-
-
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/appointments")
-
-
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
@@ -22,7 +19,7 @@ public class AppointmentController {
     }
 
     @PostMapping
-    public Appointment createAppointment(@RequestBody AppointmentRequest request) {
+    public Appointment createAppointment(@Valid @RequestBody AppointmentRequest request) {
         return appointmentService.createAppointment(request);
     }
 
@@ -30,6 +27,7 @@ public class AppointmentController {
     public List<Appointment> getAllAppointments() {
         return appointmentService.getAllAppointments();
     }
+
     @PutMapping("/cancel/{id}")
     public Appointment cancelAppointment(@PathVariable Long id){
         return appointmentService.cancelAppointment(id);
@@ -44,6 +42,7 @@ public class AppointmentController {
     public List<Appointment> getAppointmentByDoctor(@PathVariable Long doctorId){
         return appointmentService.getAppointmentByDoctor(doctorId);
     }
+
     @GetMapping("/status/{status}")
     public List<Appointment> getAppointmentsByStatus(@PathVariable String status) {
         return appointmentService.getAppointmentsByStatus(status);
@@ -60,6 +59,13 @@ public class AppointmentController {
                         id,
                         newDate,
                         newTime);
+    }
+
+    @PutMapping("/prescription/{id}")
+    public Appointment updatePrescription(
+            @PathVariable Long id,
+            @RequestParam String prescription) {
+        return appointmentService.updatePrescription(id, prescription);
     }
 
 }

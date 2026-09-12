@@ -1,8 +1,10 @@
 package com.healthcare.healthcare_backend.service;
 
 import com.healthcare.healthcare_backend.dto.RegisterRequest;
+import com.healthcare.healthcare_backend.entity.Patient;
 import com.healthcare.healthcare_backend.entity.Role;
 import com.healthcare.healthcare_backend.entity.User;
+import com.healthcare.healthcare_backend.repository.PatientRepository;
 import com.healthcare.healthcare_backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +14,11 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PatientRepository patientRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PatientRepository patientRepository) {
         this.userRepository = userRepository;
+        this.patientRepository = patientRepository;
     }
 
     public User registerUser(RegisterRequest request) {
@@ -35,7 +39,16 @@ public class UserService {
             throw new RuntimeException("Invalid role: " + request.getRole());
         }
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // Auto-create the linked Patient row so bookings/lookups work immediately
+        if (savedUser.getRole() == Role.PATIENT) {
+            Patient patient = new Patient();
+            patient.setUser(savedUser);
+            patientRepository.save(patient);
+        }
+
+        return savedUser;
     }
 
     public List<User> getAllUsers() {

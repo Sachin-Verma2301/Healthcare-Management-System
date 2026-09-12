@@ -1,6 +1,9 @@
 package com.healthcare.notification.service;
 
 import com.healthcare.notification.model.Notification;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,33 +18,17 @@ public class NotificationService {
 
     private final Map<Long, Notification> notificationStore = new ConcurrentHashMap<>();
     private final AtomicLong idGenerator = new AtomicLong(1);
+    private final JavaMailSender mailSender;
 
-    public NotificationService() {
-        // Sample initial notifications for demonstration
-        sendNotification(new Notification(
-                idGenerator.getAndIncrement(),
-                "patient@hospital.com",
-                "Rahul Sharma",
-                "Appointment Confirmed",
-                "Your consultation with Dr. Bhavna Chaudhry is confirmed for tomorrow at 10:00 AM.",
-                "EMAIL"
-        ));
-        sendNotification(new Notification(
-                idGenerator.getAndIncrement(),
-                "dr.bhavna@hospital.com",
-                "Dr. Bhavna Chaudhry",
-                "New Patient Booking",
-                "Patient Rahul Sharma has booked an appointment for tomorrow at 10:00 AM.",
-                "EMAIL"
-        ));
+    @Autowired
+    public NotificationService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+        // No demo emails anymore — real notifications only, triggered by actual bookings
     }
 
     public Notification sendNotification(Notification notification) {
         if (notification.getId() == null) {
             notification.setId(idGenerator.getAndIncrement());
-        }
-        if (notification.getStatus() == null) {
-            notification.setStatus("SENT");
         }
         if (notification.getTimestamp() == null) {
             notification.setTimestamp(
@@ -54,15 +41,27 @@ public class NotificationService {
             notification.setNotificationType("EMAIL");
         }
 
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(notification.getRecipientEmail());
+            message.setSubject(notification.getSubject());
+            message.setText(notification.getMessage());
+            mailSender.send(message);
+
+            notification.setStatus("SENT");
+            System.out.println(
+                    "✅ [EMAIL SENT] To: " + notification.getRecipientEmail()
+                            + " | Subject: " + notification.getSubject()
+            );
+        } catch (Exception e) {
+            notification.setStatus("FAILED");
+            System.out.println(
+                    "❌ [EMAIL FAILED] To: " + notification.getRecipientEmail()
+                            + " | Error: " + e.getMessage()
+            );
+        }
+
         notificationStore.put(notification.getId(), notification);
-
-        System.out.println(
-                "🔔 [NOTIFICATION SENT] To: "
-                        + notification.getRecipientEmail()
-                        + " | Subject: "
-                        + notification.getSubject()
-        );
-
         return notification;
     }
 
@@ -80,11 +79,9 @@ public class NotificationService {
 
     public Map<String, Object> getNotificationSummary() {
         Map<String, Object> summary = new HashMap<>();
-
         summary.put("totalDispatched", notificationStore.size());
         summary.put("status", "ACTIVE");
         summary.put("servicePort", 8082);
-
         return summary;
     }
 }

@@ -157,12 +157,10 @@ function Dashboard() {
                 paymentStatus: "PAID"
             }).catch(() => {});
 
-            // Dispatch background event to Notification Microservice (Port 8082)
-            notificationApi.post("/notifications/send", {
-                recipientEmail: currentUser.email,
-                subject: "Appointment Confirmed",
-                message: `Your consultation with ${docName} on ${bookingDate} at ${bookingTime} is confirmed.`
-            }).catch(() => {});
+            // Note: appointment confirmation email is sent server-side by
+            // healthcare-backend (AppointmentService) using the patient's
+            // registered email, so no direct call to notification-service
+            // is made from the frontend here.
 
             showAlert("Appointment booked successfully.", "success");
             setBookingDate("");
